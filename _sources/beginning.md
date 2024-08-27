@@ -25,13 +25,5 @@
 後殿中由北郊金萬利與泉郊金晉順共同提贈的「情殷桑梓」匾，反映了兩者與龍山寺共生的社會關係。來源：筆者照片，2024/8/17。
 :::
 
----
-參考資料：
-
-1. 林承緯、張靖委 (2017)。民俗文化資產在臺北：請關渡媽、跳鍾馗、艋舺龍山寺中元盂蘭盆勝會。臺北市立文獻館。
-2. Sauer,C. (1969). *The morphology of landscape* In J.Leighly(Ed.), Land & Life: A Selection from the Writings of Carl Ortwin Saue (pp. 315-350). University of California Press,Berkly and Los Angeles.
-3. Lewis, P. (1979). *Axioms for Reading the Landscape: Some Guides to the American Scene*. In D. W. Meinig (Ed.), The Interpretation of Ordinary Landscapes: Geographical Essays (pp. 11-32). Oxford University Press.4. 森正夫（2014）。地域社會論的核心、背景、理解和課題。人文研究期刊，(12)，27-32。https://www.airitilibrary.com/Article/Detail?DocID=19967934-201412-201703130020-201703130020-27-32
-5. 施添福 (2020)。社會史、區域史與地域社會：以清代台灣北部內山的研究方法論為中心；收錄於張隆志主編，島嶼的求索：台灣史論叢史學篇。國立臺灣大學出版中心。
-
 
 
