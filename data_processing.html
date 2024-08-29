@@ -482,7 +482,7 @@ document.write(`
 </figure>
 <hr class="docutils" />
 <ul class="simple">
-<li><p>將含有坐標點位的照片匯入qgis，並使用plugins<code class="docutils literal notranslate"><span class="pre">import_photo</span></code>匯出成geojson檔</p></li>
+<li><p>將含有坐標點位的照片匯入<code class="docutils literal notranslate"><span class="pre">QGIS</span></code>，並使用plugins<code class="docutils literal notranslate"><span class="pre">import_photo</span></code>匯出成geojson檔</p></li>
 </ul>
 <figure class="align-default" id="id6">
 <img alt="_images/456456.jpg" src="_images/456456.jpg" />
@@ -510,7 +510,7 @@ document.write(`
 <section id="id3">
 <h2>呈現路徑與照片點位疊圖<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>匯入<code class="docutils literal notranslate"><span class="pre">folium</span></code>和<code class="docutils literal notranslate"><span class="pre">json</span></code>，<code class="docutils literal notranslate"><span class="pre">folium</span></code>是一款免費且開源的python插件，功能類似於地圖產生器可以呈現各式地理資訊，內建的popup功能可以用來顯示屬性(點位照片、名稱與描述)</p></li>
+<li><p>匯入<code class="docutils literal notranslate"><span class="pre">folium</span></code>和<code class="docutils literal notranslate"><span class="pre">json</span></code>，<code class="docutils literal notranslate"><span class="pre">folium</span></code>是一款專門用來呈現各式地理資訊的python插件，其中內建的popup參數可以用來顯示屬性(點位照片、名稱與描述)</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">folium</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -535,7 +535,7 @@ document.write(`
 </div>
 <hr class="docutils" />
 <ul class="simple">
-<li><p>匯入Geotagged照片點位，設定popup屬性並加入地圖</p></li>
+<li><p>匯入Geotagged照片點位，新增屬性並加入地圖</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">points_geojson_file</span> <span class="o">=</span> <span class="s1">&#39;point.geojson&#39;</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">points_geojson_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -549,7 +549,7 @@ document.write(`
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>建立Popup來顯示前面設定好的圖片連結、名稱和描述</p></li>
+<li><p>建立<code class="docutils literal notranslate"><span class="pre">Popup</span></code>參數來顯示前面設定好的圖片連結、名稱和描述</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">popup_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    &lt;b&gt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/b&gt;&lt;br&gt;</span>

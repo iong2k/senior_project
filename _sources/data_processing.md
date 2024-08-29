@@ -82,7 +82,7 @@ from IPython.display import display, HTML
 :::
 
 ---
-* 將含有坐標點位的照片匯入qgis，並使用plugins`import_photo`匯出成geojson檔
+* 將含有坐標點位的照片匯入`QGIS`，並使用plugins`import_photo`匯出成geojson檔
 ::: {figure-md}
 <img src="image/data/456456.jpg" style="width:400px;"/>
 
@@ -107,7 +107,7 @@ import_photo介面
 
 ## 呈現路徑與照片點位疊圖
 
-* 匯入`folium`和`json`，`folium`是一款免費且開源的python插件，功能類似於地圖產生器可以呈現各式地理資訊，內建的popup功能可以用來顯示屬性(點位照片、名稱與描述)
+* 匯入`folium`和`json`，`folium`是一款專門用來呈現各式地理資訊的python插件，其中內建的popup參數可以用來顯示屬性(點位照片、名稱與描述)
 ```
 import folium
 import json
@@ -128,7 +128,7 @@ with open(geojson_file_path, encoding='utf-8') as f:
 folium.GeoJson(geojson_data, name="出巡路徑").add_to(m
 ```
 ---
-* 匯入Geotagged照片點位，設定popup屬性並加入地圖
+* 匯入Geotagged照片點位，新增屬性並加入地圖
 
 ```
 points_geojson_file = 'point.geojson'
@@ -141,7 +141,7 @@ for feature in points_geojson_data['features']:
     name = properties.get('Name', '')
     description = properties.get('description', '')
  ```   
-* 建立Popup來顯示前面設定好的圖片連結、名稱和描述
+* 建立`Popup`參數來顯示前面設定好的圖片連結、名稱和描述
 
 ``` 
    popup_content = f"""
