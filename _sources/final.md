@@ -16,8 +16,8 @@
 
 
 ```{tip}
-我在2024年暑假來到中研院GIS專題中心實習，因為老師莊庭瑞同時也是資訊所的合聘研究人員，因此我絕大部分的時間都是在資創中心的data collaboration and digital preservation實驗室(隸屬於depositar lab)度過。
+我在2024年暑假來到中研院GIS專題中心實習，因為老師莊庭瑞同時也是資訊所的合聘研究人員，因此大部分的時間都是在資創中心的data collaboration and digital preservation實驗室(隸屬於depositar lab)度過。
 
-我在這裡學習到了諸如FAIR data、RDM、github、jupyter notebook等資料管理相關概念與工具，很謝謝老師與其他實習生夥伴的幫忙，沒有你們就不會有這份小小的成果。
+我在這裡學習到了諸如FAIR data、RDM、github、jupyter notebook等資料管理相關概念與工具，很謝謝老師與其他實習生夥伴的幫忙，沒有你們就不會有這份微小的成果。
 ```
-**這本jupyterbook是我初入資訊新手村的一個小小註腳**
+**這本jupyter book是我初入資訊新手村的一個小小註腳**
