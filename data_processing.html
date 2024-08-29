@@ -285,7 +285,7 @@
       
       
       
-      <li><a href="_sources/data_processing.ipynb" target="_blank"
+      <li><a href="_sources/data_processing.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -295,7 +295,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.ipynb</span>
+<span class="btn__text-container">.md</span>
 </a>
 </li>
       
@@ -379,8 +379,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">360°攝影</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpxgeotagging">gpx路徑與geotagging照片</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">呈現360°攝影</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpxgeotagged">數化路徑gpx和geotagged照片</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">呈現路徑與照片點位疊圖</a></li>
 </ul>
             </nav>
         </div>
@@ -395,892 +396,173 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="id1">
 <h1>資料處理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
 <section id="id2">
-<h2>360°攝影<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>Pannellum為一個免費開源的Javascript libebry，專門用來顯示360照片，以下是逐步處理步驟。</p>
-<figure class="align-default" id="id3">
+<h2>呈現360°攝影<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Pannellum</span></code>為一個免費開源的Javascript libebry，專門用來顯示360照片。</p>
+<p>以下是逐步處理步驟：</p>
+<ul class="simple">
+<li><p>將360°與熱點照片上傳至imgur，並點選新分頁開啟圖片，將網址貼進剪貼簿</p></li>
+</ul>
+<figure class="align-default" id="id4">
 <img alt="_images/26656.jpg" src="_images/26656.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 11 </span><span class="caption-text">將360°與熱點照片上傳至imgur</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 11 </span><span class="caption-text">imgur是一款相當方便的圖像儲存平台。</span><a class="headerlink" href="#id4" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span> 
-<span class="c1"># pannellum要放在jupyter notebook並增加完整功能就必須以html顯示，從IPython.display模組加入display(函數)和HTML(用來顯示html檔)</span>
-<span class="c1"># 加入html的文字宣告避免跑版</span>
-<span class="c1"># 將html設定語言lang並指定繁體中文</span>
-<span class="c1"># head部分為CSS、body為API，皆可直接從pannellum的documentation中嵌入</span>
-<span class="c1"># 主要新增兩張360投影、指北針(調整參數使其對到正北)、熱點、熱點圖片與文字描述</span>
-<span class="n">html_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">&lt;!DOCTYPE html&gt;</span>
-<span class="s2">&lt;html lang=&quot;zh-Hant&quot;&gt;</span>
-<span class="s2">&lt;head&gt;</span>
-<span class="s2">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span>
-<span class="s2">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</span>
-<span class="s2">    &lt;title&gt;Pannellum 範例&lt;/title&gt;</span>
-<span class="s2">    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css&quot;&gt;</span>
-<span class="s2">&lt;/head&gt;</span>
-<span class="s2">&lt;body&gt;</span>
-<span class="s2">    &lt;div id=&quot;panorama&quot; style=&quot;width: 100%; height: 580px;&quot;&gt;&lt;/div&gt;</span>
-<span class="s2">    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js&quot;&gt;&lt;/script&gt;</span>
-<span class="s2">    &lt;script&gt;</span>
-<span class="s2">        pannellum.viewer(&#39;panorama&#39;, {</span>
-<span class="s2">            &quot;default&quot;: {</span>
-<span class="s2">                &quot;firstScene&quot;: &quot;scene1&quot;,  // 初始場景</span>
-<span class="s2">                &quot;autoLoad&quot;: true,</span>
-<span class="s2">                &quot;author&quot;: &quot;Lîm Tîng-iông&quot;,  // 作者名</span>
-<span class="s2">                &quot;compass&quot;: true,</span>
-<span class="s2">                &quot;northOffset&quot;: -3.2,</span>
-<span class="s2">            },</span>
-<span class="s2">            &quot;scenes&quot;: {</span>
-<span class="s2">                &quot;scene1&quot;: {</span>
-<span class="s2">                    &quot;type&quot;: &quot;equirectangular&quot;,</span>
-<span class="s2">                    &quot;panorama&quot;: &quot;https://i.imgur.com/MC3WXDw.jpeg&quot;,</span>
-<span class="s2">                    &quot;title&quot;: &quot;艋舺龍山寺廟埕&quot;,</span>
-<span class="s2">                    &quot;pitch&quot;: 0,</span>
-<span class="s2">                    &quot;yaw&quot;: 0,</span>
-<span class="s2">                    &quot;hotSpots&quot;: [</span>
-<span class="s2">                        {</span>
-<span class="s2">                            &quot;pitch&quot;: 1, //垂直角度</span>
-<span class="s2">                            &quot;yaw&quot;: 0, //水平角度</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: `</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/lQi0OGt.jpeg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;普渡山&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    由大士爺與各個護法神坐鎮，負責主持普渡現場。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: 3, </span>
-<span class="s2">                            &quot;yaw&quot;: 10.5, </span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: `</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/uhiAaws.jpeg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;開光前的山神&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    土地公與山神為擺在普渡山左右的「在地嚮導」，開光儀式後靈力就會進入神像中。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: 6.5,</span>
-<span class="s2">                            &quot;yaw&quot;: -102,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;:`</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/6O9ulLG.jpeg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;普渡燈&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    燈篙的一種，用意是幫孤魂指引方向，傳說中架的越高越有「誠意」。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: 9,</span>
-<span class="s2">                            &quot;yaw&quot;: -120,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: `</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/0JhqXRh.jpg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;幢&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    燈篙的一種，用意是向孤魂宣告龍山寺正在舉行辦中元。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: 15,</span>
-<span class="s2">                            &quot;yaw&quot;: 118,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: &quot;七星燈&quot;</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: -5,</span>
-<span class="s2">                            &quot;yaw&quot;: 110,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: `</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/VFRmnS9.jpeg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;榜單&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    上有各個主要祭祀公業名稱，依次點榜昭告眾鬼神辦中元即將開始。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: 1,</span>
-<span class="s2">                            &quot;yaw&quot;: 50,</span>
-<span class="s2">                            &quot;type&quot;: &quot;scene&quot;,</span>
-<span class="s2">                            &quot;text&quot;: &quot;前往正殿&quot;,</span>
-<span class="s2">                            &quot;sceneId&quot;: &quot;scene2&quot;</span>
-<span class="s2">                        }</span>
-<span class="s2">                    ]</span>
-<span class="s2">                },</span>
-<span class="s2">                &quot;scene2&quot;: {</span>
-<span class="s2">                    &quot;type&quot;: &quot;equirectangular&quot;,</span>
-<span class="s2">                    &quot;panorama&quot;: &quot;https://i.imgur.com/wBkMzs2.jpeg&quot;,</span>
-<span class="s2">                    &quot;title&quot;: &quot;艋舺龍山寺正殿&quot;,</span>
-<span class="s2">                    &quot;pitch&quot;: 0,</span>
-<span class="s2">                    &quot;yaw&quot;: 180,</span>
-<span class="s2">                    &quot;hotSpots&quot;: [</span>
-<span class="s2">                        {</span>
-<span class="s2">                            &quot;pitch&quot;: 4,</span>
-<span class="s2">                            &quot;yaw&quot;: -10,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: &quot;辦中元期間的飛聯。&quot;</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: -4,</span>
-<span class="s2">                            &quot;yaw&quot;: -148,</span>
-<span class="s2">                            &quot;type&quot;: &quot;scene&quot;,</span>
-<span class="s2">                            &quot;text&quot;: &quot;前往廟埕&quot;,</span>
-<span class="s2">                            &quot;sceneId&quot;: &quot;scene1&quot;</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: 10,</span>
-<span class="s2">                            &quot;yaw&quot;: 175,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: &quot;三川殿&quot;</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: -28,</span>
-<span class="s2">                            &quot;yaw&quot;: 173.5,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: &quot;天公爐&quot;</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: -9,</span>
-<span class="s2">                            &quot;yaw&quot;: -150,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: `</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/CLoTGj0.jpeg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;紙厝&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    為普渡期間孤魂的休息處，龍山寺有四間紙厝分別為寒林院、翰林院、同歸所與五泉廟，其中五泉廟為龍山寺特有。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        },{</span>
-<span class="s2">                            &quot;pitch&quot;: -5,</span>
-<span class="s2">                            &quot;yaw&quot;: -4,</span>
-<span class="s2">                            &quot;type&quot;: &quot;info&quot;,</span>
-<span class="s2">                            &quot;text&quot;: `</span>
-<span class="s2">                                &lt;div style=&quot;text-align: center;&quot;&gt;</span>
-<span class="s2">                                    &lt;img src=&quot;https://i.imgur.com/aQfD6eK.jpg&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt;</span>
-<span class="s2">                                    &lt;strong&gt;斗燈&lt;/strong&gt;&lt;br/&gt;</span>
-<span class="s2">                                    辦中元期間祈福的道具。</span>
-<span class="s2">                                &lt;/div&gt;</span>
-<span class="s2">                            `</span>
-<span class="s2">                        }</span>
-<span class="s2">                    ]</span>
-<span class="s2">                }</span>
-<span class="s2">            }</span>
-<span class="s2">        });</span>
-<span class="s2">    &lt;/script&gt;</span>
-<span class="s2">&lt;/body&gt;</span>
-<span class="s2">&lt;/html&gt;</span>
-<span class="s2">&quot;&quot;&quot;</span>
-
-<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">html_code</span><span class="p">))</span>
-<span class="c1"># 新增兩張360投影、指北針(調整參數使其對到正北)、熱點、熱點圖片與文字描述</span>
+<hr class="docutils" />
+<ul class="simple">
+<li><p>匯入模組<code class="docutils literal notranslate"><span class="pre">IPython.display</span></code></p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>由於pannellum是基於javascript的程式庫，要放在jupyter notebook須以html顯示。我們可以從<code class="docutils literal notranslate"><span class="pre">IPython.display</span></code>模組加入display(函數)和HTML(用來顯示html檔)的功能</p>
+<p>◆ 加入html的文字宣告避免跑版</p>
+<p>◆ 將html設定lang以顯示語言並指定繁體中文</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>from IPython.display import display, HTML 
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pannellum 範例</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
-</head>
-<body>
-    <div id="panorama" style="width: 100%; height: 580px;"></div>
-    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-    <script>
-        pannellum.viewer('panorama', {
-            "default": {
-                "firstScene": "scene1",  // 初始場景
-                "autoLoad": true,
-                "author": "Lîm Tîng-iông",  // 作者名
-                "compass": true,
-                "northOffset": -3.2,
-            },
-            "scenes": {
-                "scene1": {
-                    "type": "equirectangular",
-                    "panorama": "https://i.imgur.com/MC3WXDw.jpeg",
-                    "title": "艋舺龍山寺廟埕",
-                    "pitch": 0,
-                    "yaw": 0,
-                    "hotSpots": [
-                        {
-                            "pitch": 1, //垂直角度
-                            "yaw": 0, //水平角度
-                            "type": "info",
-                            "text": `
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/lQi0OGt.jpeg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>普渡山</strong><br/>
-                                    由大士爺與各個護法神坐鎮，負責主持普渡現場。
-                                </div>
-                            `
-                        },{
-                            "pitch": 3, 
-                            "yaw": 10.5, 
-                            "type": "info",
-                            "text": `
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/uhiAaws.jpeg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>開光前的山神</strong><br/>
-                                    土地公與山神為擺在普渡山左右的「在地嚮導」，開光儀式後靈力就會進入神像中。
-                                </div>
-                            `
-                        },{
-                            "pitch": 6.5,
-                            "yaw": -102,
-                            "type": "info",
-                            "text":`
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/6O9ulLG.jpeg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>普渡燈</strong><br/>
-                                    燈篙的一種，用意是幫孤魂指引方向，傳說中架的越高越有「誠意」。
-                                </div>
-                            `
-                        },{
-                            "pitch": 9,
-                            "yaw": -120,
-                            "type": "info",
-                            "text": `
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/0JhqXRh.jpg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>幢</strong><br/>
-                                    燈篙的一種，用意是向孤魂宣告龍山寺正在舉行辦中元。
-                                </div>
-                            `
-                        },{
-                            "pitch": 15,
-                            "yaw": 118,
-                            "type": "info",
-                            "text": "七星燈"
-                        },{
-                            "pitch": -5,
-                            "yaw": 110,
-                            "type": "info",
-                            "text": `
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/VFRmnS9.jpeg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>榜單</strong><br/>
-                                    上有各個主要祭祀公業名稱，依次點榜昭告眾鬼神辦中元即將開始。
-                                </div>
-                            `
-                        },{
-                            "pitch": 1,
-                            "yaw": 50,
-                            "type": "scene",
-                            "text": "前往正殿",
-                            "sceneId": "scene2"
-                        }
-                    ]
+<hr class="docutils" />
+<ul class="simple">
+<li><p>從pannellum的documentation中嵌入指定元件的<code class="docutils literal notranslate"><span class="pre">CSS</span></code>和<code class="docutils literal notranslate"><span class="pre">API</span></code>，並調整參數。在這個示範中我新增了擴增項、指北針與熱點</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt; 
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Pannellum示範&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id=&quot;panorama&quot; style=&quot;width: 100%; height: 580px;&quot;&gt;&lt;/div&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js&quot;&gt;&lt;/script&gt;
+    &lt;script&gt;
+        pannellum.viewer(&#39;panorama&#39;, {
+            &quot;default&quot;: {
+                &quot;firstScene&quot;: &quot;scene1&quot;,  // 初始場景
+                &quot;autoLoad&quot;: true, //自動載入360°照片
+                &quot;author&quot;: &quot;&quot;,  // 作者名稱
+                &quot;compass&quot;: true, //設定指北針
+                &quot;northOffset&quot;: -3.2, ``` //指北對位
                 },
-                "scene2": {
-                    "type": "equirectangular",
-                    "panorama": "https://i.imgur.com/wBkMzs2.jpeg",
-                    "title": "艋舺龍山寺正殿",
-                    "pitch": 0,
-                    "yaw": 180,
-                    "hotSpots": [
+            &quot;scenes&quot;: {
+                &quot;scene1&quot;: {
+                    &quot;type&quot;: &quot;equirectangular&quot;,
+                    &quot;panorama&quot;: &quot;https://i.imgur.com/MC3WXDw.jpeg&quot;,
+                    &quot;title&quot;: &quot;&quot;,初始場景名稱
+                    &quot;pitch&quot;: 0,
+                    &quot;yaw&quot;: 0,
+                    &quot;hotSpots&quot;: [
                         {
-                            "pitch": 4,
-                            "yaw": -10,
-                            "type": "info",
-                            "text": "辦中元期間的飛聯。"
-                        },{
-                            "pitch": -4,
-                            "yaw": -148,
-                            "type": "scene",
-                            "text": "前往廟埕",
-                            "sceneId": "scene1"
-                        },{
-                            "pitch": 10,
-                            "yaw": 175,
-                            "type": "info",
-                            "text": "三川殿"
-                        },{
-                            "pitch": -28,
-                            "yaw": 173.5,
-                            "type": "info",
-                            "text": "天公爐"
-                        },{
-                            "pitch": -9,
-                            "yaw": -150,
-                            "type": "info",
-                            "text": `
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/CLoTGj0.jpeg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>紙厝</strong><br/>
-                                    為普渡期間孤魂的休息處，龍山寺有四間紙厝分別為寒林院、翰林院、同歸所與五泉廟，其中五泉廟為龍山寺特有。
-                                </div>
-                            `
-                        },{
-                            "pitch": -5,
-                            "yaw": -4,
-                            "type": "info",
-                            "text": `
-                                <div style="text-align: center;">
-                                    <img src="https://i.imgur.com/aQfD6eK.jpg" style="width: 200px; height: auto;"/><br/>
-                                    <strong>斗燈</strong><br/>
-                                    辦中元期間祈福的道具。
-                                </div>
+                            &quot;pitch&quot;: 1, //垂直角度
+                            &quot;yaw&quot;: 0, //水平角度
+                            &quot;type&quot;: &quot;info&quot;,
+                            &quot;text&quot;: `
+                                &lt;div style=&quot;text-align: center;&quot;&gt;
+                                    &lt;img src=&quot;這裡放熱點圖片網址&quot; style=&quot;width: 200px; height: auto;&quot;/&gt;&lt;br/&gt; //設定圖片大小
+                                    &lt;strong&gt;這裡放熱點名稱&lt;/strong&gt;&lt;br/&gt;
+                                    這排放文字敘述。
+                                &lt;/div&gt;
                             `
                         }
-                    ]
-                }
-            }
-        });
-    </script>
-</body>
-</html>
-</div></div>
+</pre></div>
 </div>
 </section>
-<section id="gpxgeotagging">
-<h2>gpx路徑與geotagging照片<a class="headerlink" href="#gpxgeotagging" title="Link to this heading">#</a></h2>
-<figure class="align-default" id="id4">
+<hr class="docutils" />
+<section id="gpxgeotagged">
+<h2>數化路徑gpx和geotagged照片<a class="headerlink" href="#gpxgeotagged" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>以手機app<code class="docutils literal notranslate"><span class="pre">Gaia</span> <span class="pre">GPS</span></code>紀錄路徑並匯出成geojson檔</p></li>
+</ul>
+<figure class="align-default" id="id5">
 <img alt="_images/5161.jpg" src="_images/5161.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 12 </span><span class="caption-text">在繞境出巡當天以Gaya gpx紀錄路徑，並輸出成geojson。</span><a class="headerlink" href="#id4" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 12 </span><span class="caption-text">含有坐標時間與高程資訊的geojson檔。</span><a class="headerlink" href="#id5" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<figure class="align-default" id="id5">
+<hr class="docutils" />
+<ul class="simple">
+<li><p>將含有坐標點位的照片匯入qgis，並使用plugins<code class="docutils literal notranslate"><span class="pre">import_photo</span></code>匯出成geojson檔</p></li>
+</ul>
+<figure class="align-default" id="id6">
 <img alt="_images/456456.jpg" src="_images/456456.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 13 </span><span class="caption-text">將含有地理資訊點位的照片匯入qgis，使用plugins <em>import_photo</em> 匯出成geojson檔</span><a class="headerlink" href="#id5" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
-<figure class="align-default" id="id6">
-<img alt="_images/16546.jpg" src="_images/16546.jpg" />
-<figcaption>
-<p><span class="caption-number">Fig. 14 </span><span class="caption-text">結果顯示有張照片的點位遺失了，沒關係可以後續再編輯gepjson檔進行手工處理</span><a class="headerlink" href="#id6" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 13 </span><span class="caption-text">import_photo介面</span><a class="headerlink" href="#id6" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id7">
-<img alt="_images/6145416.jpg" src="_images/6145416.jpg" />
+<img alt="_images/16546.jpg" src="_images/16546.jpg" />
 <figcaption>
-<p><span class="caption-number">Fig. 15 </span><span class="caption-text">打開照片點位的geojson，找出前面點位遺失的照片手動增加經緯度，並在每項點位各增加兩項properties:photo_url和description，將名稱路徑與描述植入，以利後續在folium中顯示</span><a class="headerlink" href="#id7" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 14 </span><span class="caption-text">結果顯示有張照片的點位遺失了，沒關係可以後續再編輯gepjson檔進行手工處理</span><a class="headerlink" href="#id7" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">folium</span>
+<ul class="simple">
+<li><p>編輯剛剛匯出的照片點位GeoJSON檔</p></li>
+</ul>
+<p>  打開照片點位的GeoJSON，找出前面點位遺失的照片手動增加經緯度，並在每項點位各增加兩項properties：photo_url和description，以利後續在folium中顯示。</p>
+<figure class="align-default" id="id8">
+<img alt="_images/6145416.jpg" src="_images/6145416.jpg" />
+<figcaption>
+<p><span class="caption-number">Fig. 15 </span><span class="caption-text">編輯點位屬性，填入圖片網址、名稱與描述</span><a class="headerlink" href="#id8" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="id3">
+<h2>呈現路徑與照片點位疊圖<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>匯入<code class="docutils literal notranslate"><span class="pre">folium</span></code>和<code class="docutils literal notranslate"><span class="pre">json</span></code>，<code class="docutils literal notranslate"><span class="pre">folium</span></code>是一款免費且開源的python插件，功能類似於地圖產生器可以呈現各式地理資訊，內建的popup功能可以用來顯示屬性(點位照片、名稱與描述)</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">folium</span>
 <span class="kn">import</span> <span class="nn">json</span>
-
-<span class="c1"># 設定地圖、中心位置和尺度，然後用 OpenStreetMap 作為底圖</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="mf">25.0385</span><span class="p">,</span> <span class="mf">121.4993</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="s1">&#39;OpenStreetMap&#39;</span><span class="p">)</span>
-
-<span class="c1"># 手動讀取出巡路徑的 GeoJSON 文件並指定編碼格式為 utf-8</span>
-<span class="n">geojson_file_path</span> <span class="o">=</span> <span class="s1">&#39;tracks.geojson&#39;</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<ul class="simple">
+<li><p>設定地圖、中心位置和尺度，然後用<code class="docutils literal notranslate"><span class="pre">OpenStreetMap</span></code>作為底圖</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="mf">25.0385</span><span class="p">,</span> <span class="mf">121.4993</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="s1">&#39;OpenStreetMap&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<ul class="simple">
+<li><p>匯入路徑的GeoJSON檔並指定編碼為 utf-8，並加入地圖</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">geojson_file_path</span> <span class="o">=</span> <span class="s1">&#39;你的路徑檔名&#39;</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">geojson_file_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">geojson_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="n">folium</span><span class="o">.</span><span class="n">GeoJson</span><span class="p">(</span><span class="n">geojson_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;出巡路徑&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-
-<span class="c1"># 手動讀取 Geotagged 照片點位的 GeoJSON 文件</span>
-<span class="n">points_geojson_file</span> <span class="o">=</span> <span class="s1">&#39;point.geojson&#39;</span>
+<span class="n">folium</span><span class="o">.</span><span class="n">GeoJson</span><span class="p">(</span><span class="n">geojson_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;出巡路徑&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<ul class="simple">
+<li><p>匯入Geotagged照片點位，設定popup屬性並加入地圖</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">points_geojson_file</span> <span class="o">=</span> <span class="s1">&#39;point.geojson&#39;</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">points_geojson_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">points_geojson_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="c1"># 添加照片點位到地圖</span>
 <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">points_geojson_data</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
     <span class="n">properties</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
-    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;coordinates&#39;</span><span class="p">]</span>
-    
-    <span class="c1"># 使用 properties </span>
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">feature</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;coordinates&#39;</span><span class="p">]</span> 
     <span class="n">photo_url</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;photo_url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">properties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># 建立Popup來顯示前面設定好的圖片連結、名稱和描述</span>
-    <span class="n">popup_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>建立Popup來顯示前面設定好的圖片連結、名稱和描述</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">popup_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    &lt;b&gt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/b&gt;&lt;br&gt;</span>
 <span class="s2">    &lt;img src=&quot;</span><span class="si">{</span><span class="n">photo_url</span><span class="si">}</span><span class="s2">&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;</span>
 <span class="s2">    </span><span class="si">{</span><span class="n">description</span><span class="si">}</span>
 <span class="s2">    &quot;&quot;&quot;</span>
     
-    <span class="c1"># 建立標記，並更改視窗大小</span>
     <span class="n">folium</span><span class="o">.</span><span class="n">Marker</span><span class="p">(</span>
-        <span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>  <span class="c1"># GeoJSON 的坐標順序是 [lon, lat]</span>
-        <span class="n">popup</span><span class="o">=</span><span class="n">folium</span><span class="o">.</span><span class="n">Popup</span><span class="p">(</span><span class="n">popup_content</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+        <span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>  <span class="o">//</span><span class="n">GeoJSON</span> <span class="n">的坐標順序是</span> <span class="p">[</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">]</span>
+        <span class="n">popup</span><span class="o">=</span><span class="n">folium</span><span class="o">.</span><span class="n">Popup</span><span class="p">(</span><span class="n">popup_content</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span> <span class="o">//</span><span class="n">調整圖框大小</span>
     <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-
-<span class="c1"># 顯示地圖</span>
 <span class="n">m</span>
 </pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-    
-    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;
-    
-        &lt;script&gt;
-            L_NO_TOUCH = false;
-            L_DISABLE_3D = false;
-        &lt;/script&gt;
-    
-    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
-    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
-    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;https://code.jquery.com/jquery-3.7.1.min.js&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
-    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css&quot;/&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;
-    
-            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
-                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
-            &lt;style&gt;
-                #map_3551156dd033bba6d4e34ebcecc5a6c7 {
-                    position: relative;
-                    width: 100.0%;
-                    height: 100.0%;
-                    left: 0.0%;
-                    top: 0.0%;
-                }
-                .leaflet-container { font-size: 1rem; }
-            &lt;/style&gt;
-        
-&lt;/head&gt;
-&lt;body&gt;
-    
-    
-            &lt;div class=&quot;folium-map&quot; id=&quot;map_3551156dd033bba6d4e34ebcecc5a6c7&quot; &gt;&lt;/div&gt;
-        
-&lt;/body&gt;
-&lt;script&gt;
-    
-    
-            var map_3551156dd033bba6d4e34ebcecc5a6c7 = L.map(
-                &quot;map_3551156dd033bba6d4e34ebcecc5a6c7&quot;,
-                {
-                    center: [25.0385, 121.4993],
-                    crs: L.CRS.EPSG3857,
-                    zoom: 16,
-                    zoomControl: true,
-                    preferCanvas: false,
-                }
-            );
-
-            
-
-        
-    
-            var tile_layer_50c190f3428330c6cc3e780caf3b6b53 = L.tileLayer(
-                &quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
-                {&quot;attribution&quot;: &quot;\u0026copy; \u003ca href=\&quot;https://www.openstreetmap.org/copyright\&quot;\u003eOpenStreetMap\u003c/a\u003e contributors&quot;, &quot;detectRetina&quot;: false, &quot;maxNativeZoom&quot;: 19, &quot;maxZoom&quot;: 19, &quot;minZoom&quot;: 0, &quot;noWrap&quot;: false, &quot;opacity&quot;: 1, &quot;subdomains&quot;: &quot;abc&quot;, &quot;tms&quot;: false}
-            );
-        
-    
-            tile_layer_50c190f3428330c6cc3e780caf3b6b53.addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-
-        function geo_json_fc57738804e9032dea8cd0166a8737c7_onEachFeature(feature, layer) {
-            layer.on({
-            });
-        };
-        var geo_json_fc57738804e9032dea8cd0166a8737c7 = L.geoJson(null, {
-                onEachFeature: geo_json_fc57738804e9032dea8cd0166a8737c7_onEachFeature,
-            
-        });
-
-        function geo_json_fc57738804e9032dea8cd0166a8737c7_add (data) {
-            geo_json_fc57738804e9032dea8cd0166a8737c7
-                .addData(data);
-        }
-            geo_json_fc57738804e9032dea8cd0166a8737c7_add({&quot;crs&quot;: {&quot;properties&quot;: {&quot;name&quot;: &quot;urn:ogc:def:crs:OGC:1.3:CRS84&quot;}, &quot;type&quot;: &quot;name&quot;}, &quot;features&quot;: [{&quot;geometry&quot;: {&quot;coordinates&quot;: [[[121.500032, 25.036777], [121.500048, 25.036784], [121.500048, 25.036784], [121.500072, 25.03679], [121.500093, 25.036777], [121.500217, 25.036777], [121.500225, 25.036778], [121.500335, 25.03678], [121.500419, 25.036761], [121.500426, 25.03676], [121.500546, 25.036753], [121.500567, 25.036797], [121.500555, 25.038179], [121.5006, 25.038269], [121.5006, 25.038319], [121.50058, 25.038355], [121.500577, 25.038388], [121.500581, 25.038401], [121.500584, 25.038436], [121.500562, 25.03845], [121.500542, 25.038437], [121.500509, 25.038463], [121.500505, 25.038514], [121.500504, 25.038532], [121.500493, 25.038574], [121.500476, 25.038594], [121.500375, 25.038617], [121.500367, 25.038619], [121.500257, 25.038621], [121.500184, 25.0386], [121.500175, 25.038604], [121.500058, 25.038619], [121.499968, 25.038611], [121.49996, 25.038608], [121.499898, 25.03864], [121.499802, 25.038646], [121.499787, 25.038647], [121.499715, 25.038637], [121.499566, 25.038644], [121.499553, 25.038644], [121.499512, 25.038641], [121.499513, 25.038615], [121.499528, 25.038605], [121.499583, 25.038612], [121.499575, 25.038634], [121.499541, 25.038638], [121.49953, 25.038639], [121.499441, 25.038658], [121.499409, 25.038643], [121.499367, 25.03864], [121.499353, 25.038642], [121.499284, 25.038638], [121.499223, 25.038658], [121.499155, 25.038653], [121.499141, 25.038651], [121.499027, 25.038639], [121.498929, 25.038643], [121.498915, 25.038644], [121.498711, 25.038669], [121.498697, 25.038673], [121.498609, 25.038672], [121.498539, 25.03866], [121.498509, 25.038667], [121.498499, 25.038671], [121.498441, 25.038685], [121.498371, 25.038678], [121.498309, 25.038691], [121.498296, 25.038689], [121.498259, 25.038685], [121.49824, 25.038666], [121.498094, 25.038659], [121.498079, 25.038661], [121.497874, 25.038671], [121.497859, 25.038671], [121.497832, 25.038675], [121.497788, 25.038713], [121.49776, 25.038715], [121.497738, 25.038699], [121.497698, 25.038703], [121.497688, 25.03871], [121.49766, 25.038743], [121.497541, 25.038716], [121.497518, 25.038711], [121.497478, 25.038708], [121.49746, 25.038721], [121.497456, 25.03874], [121.497466, 25.038762], [121.497487, 25.038771], [121.497529, 25.038755], [121.497528, 25.038744], [121.497527, 25.038737], [121.497531, 25.038685], [121.497505, 25.038681], [121.497461, 25.038711], [121.497479, 25.038764], [121.497484, 25.038781], [121.497534, 25.038895], [121.497533, 25.038936], [121.497528, 25.038952], [121.497517, 25.038985], [121.497632, 25.039072], [121.497655, 25.03907], [121.497648, 25.039083], [121.497634, 25.039115], [121.497682, 25.039248], [121.497686, 25.039255], [121.497728, 25.039336], [121.497772, 25.039397], [121.497777, 25.039405], [121.497843, 25.039562], [121.497842, 25.039571], [121.497854, 25.039662], [121.497876, 25.039731], [121.497879, 25.039741], [121.497929, 25.039929], [121.497934, 25.03994], [121.497957, 25.040065], [121.497995, 25.04009], [121.498007, 25.0401], [121.498037, 25.040115], [121.498163, 25.040103], [121.498198, 25.040109], [121.498206, 25.04011], [121.498397, 25.04012], [121.49841, 25.040119], [121.498453, 25.040123], [121.498522, 25.040103], [121.498597, 25.040095], [121.498608, 25.040094], [121.498793, 25.040091], [121.498804, 25.040096], [121.499004, 25.040088], [121.499017, 25.040088], [121.499125, 25.040092], [121.499178, 25.040111], [121.499196, 25.040133], [121.499205, 25.040138], [121.499239, 25.040138], [121.499262, 25.040123], [121.499285, 25.040136], [121.499314, 25.040135], [121.499359, 25.040106], [121.499361, 25.040138], [121.499361, 25.040139], [121.499356, 25.040164], [121.499423, 25.040177], [121.499401, 25.040162], [121.499353, 25.040167], [121.49935, 25.04017], [121.499367, 25.040193], [121.499411, 25.040224], [121.499456, 25.040232], [121.499482, 25.040219], [121.499512, 25.040227], [121.499519, 25.040228], [121.49953, 25.040207], [121.499557, 25.040201], [121.49962, 25.040233], [121.499678, 25.040238], [121.499679, 25.040236], [121.499676, 25.040215], [121.499521, 25.040207], [121.499503, 25.040204], [121.499487, 25.040195], [121.499485, 25.040171], [121.499505, 25.040184], [121.499619, 25.040204], [121.499627, 25.040203], [121.499724, 25.040233], [121.499781, 25.040229], [121.499797, 25.040226], [121.499832, 25.040228], [121.499847, 25.040238], [121.4999, 25.04033], [121.499898, 25.04034], [121.499893, 25.040352], [121.499925, 25.040461], [121.499936, 25.040485], [121.499962, 25.0405], [121.499964, 25.040501], [121.499978, 25.040549], [121.499956, 25.040565], [121.499952, 25.040538], [121.499969, 25.040596], [121.499966, 25.040609], [121.499948, 25.040651], [121.499946, 25.04075], [121.499947, 25.040766], [121.499953, 25.040861], [121.499974, 25.040928], [121.499978, 25.040942], [121.500056, 25.0411], [121.500063, 25.041112], [121.5001, 25.041207], [121.500115, 25.041271], [121.500118, 25.041285], [121.500124, 25.041326], [121.500073, 25.041329], [121.500065, 25.041305], [121.50008, 25.041292], [121.500141, 25.041279], [121.500151, 25.041283], [121.500214, 25.04127], [121.500315, 25.041195], [121.500326, 25.041187], [121.50035, 25.041155], [121.500494, 25.041097], [121.500509, 25.041091], [121.500574, 25.04107], [121.500677, 25.041063], [121.500688, 25.041058], [121.50075, 25.040984], [121.500765, 25.040956], [121.500766, 25.040923], [121.500775, 25.040908], [121.500789, 25.040876], [121.50075, 25.040811], [121.500738, 25.040752], [121.500733, 25.040737], [121.50068, 25.040613], [121.500676, 25.0406], [121.500693, 25.040511], [121.500687, 25.040397], [121.500688, 25.040384], [121.500677, 25.040362], [121.500634, 25.04032], [121.500654, 25.040249], [121.500656, 25.040236], [121.500661, 25.040222]], [[121.500701, 25.040198], [121.500686, 25.040038], [121.500685, 25.04002], [121.500682, 25.039965], [121.500704, 25.039915], [121.500693, 25.039872], [121.500696, 25.039853], [121.500689, 25.039817], [121.500655, 25.039768], [121.500713, 25.039685], [121.500719, 25.039669], [121.500729, 25.039629], [121.500727, 25.039587], [121.500654, 25.039522], [121.500648, 25.03951], [121.50065, 25.039447], [121.50063, 25.039391], [121.500664, 25.039348], [121.500672, 25.039341], [121.500702, 25.039313], [121.500697, 25.039288], [121.500676, 25.039272], [121.500657, 25.039213], [121.500665, 25.039174], [121.500672, 25.039157], [121.500655, 25.039078], [121.500705, 25.039], [121.500709, 25.038989], [121.50075, 25.038928], [121.500781, 25.038837], [121.500784, 25.038827], [121.500783, 25.038704], [121.500774, 25.038681], [121.500748, 25.038663], [121.50073, 25.03866], [121.500691, 25.038648], [121.500654, 25.038587], [121.500634, 25.038571], [121.500589, 25.038564], [121.500575, 25.038564], [121.500429, 25.038567], [121.500411, 25.038568], [121.500271, 25.038571], [121.500203, 25.038584], [121.500189, 25.038586], [121.500098, 25.038597], [121.499992, 25.038587], [121.499983, 25.038586], [121.499868, 25.038619], [121.499809, 25.038622], [121.499797, 25.038622], [121.499721, 25.038642], [121.499611, 25.038638], [121.499598, 25.038637], [121.499411, 25.038647], [121.4994, 25.038649], [121.499292, 25.038649], [121.499217, 25.038633], [121.499216, 25.038633], [121.499148, 25.038623], [121.4991, 25.038636], [121.499036, 25.038633], [121.499026, 25.038632], [121.498924, 25.038627], [121.498833, 25.038648], [121.498819, 25.038652], [121.498633, 25.038657], [121.498624, 25.038657], [121.498565, 25.038642], [121.498429, 25.038641], [121.498415, 25.038641], [121.49831, 25.038655], [121.498226, 25.038652], [121.498214, 25.038652], [121.498102, 25.038653], [121.498021, 25.038634], [121.498014, 25.038633], [121.497955, 25.038639], [121.497909, 25.038667], [121.497823, 25.038683], [121.497813, 25.038679], [121.497753, 25.038669], [121.497711, 25.038691], [121.497649, 25.038701], [121.49764, 25.038705], [121.497554, 25.038721], [121.497483, 25.038706], [121.49746, 25.038687], [121.497456, 25.038688], [121.49726, 25.038694], [121.497251, 25.038695], [121.497186, 25.038703], [121.497158, 25.038696], [121.497095, 25.038658], [121.497062, 25.038666], [121.497052, 25.038665], [121.496977, 25.038628], [121.496868, 25.038636], [121.496861, 25.038635], [121.496676, 25.038709], [121.496665, 25.038717], [121.496633, 25.038739], [121.496605, 25.038744], [121.496553, 25.038794], [121.496495, 25.038803], [121.496486, 25.038802], [121.496431, 25.038794], [121.496404, 25.038805], [121.496379, 25.038802], [121.496339, 25.038832], [121.496331, 25.038864], [121.496322, 25.038872], [121.496312, 25.038921], [121.496193, 25.038966], [121.496174, 25.038962], [121.496159, 25.038956], [121.496109, 25.038966], [121.496025, 25.039015], [121.496016, 25.039021], [121.495953, 25.039068], [121.495925, 25.039159], [121.49592, 25.039165], [121.495885, 25.039197], [121.495858, 25.039251], [121.495832, 25.039263], [121.495812, 25.039292], [121.4958, 25.03929], [121.495802, 25.039235], [121.495826, 25.039196], [121.495827, 25.039172], [121.495816, 25.039149], [121.495789, 25.039127], [121.495784, 25.039124], [121.495774, 25.039114]]], &quot;type&quot;: &quot;MultiLineString&quot;}, &quot;properties&quot;: {&quot;line&quot;: &quot;\u003ccolor\u003e2D3FC7\u003c/color\u003e&quot;, &quot;name&quot;: &quot;\u65b0\u8ecc\u8de1 2024/8/17 18:02:41&quot;, &quot;number&quot;: 10}, &quot;type&quot;: &quot;Feature&quot;}], &quot;name&quot;: &quot;tracks&quot;, &quot;type&quot;: &quot;FeatureCollection&quot;});
-        geo_json_fc57738804e9032dea8cd0166a8737c7.setStyle(function(feature) {return feature.properties.style;});
-
-        
-    
-            geo_json_fc57738804e9032dea8cd0166a8737c7.addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-            var marker_f1fc2d59dc049b17250e1fb9e71abb52 = L.marker(
-                [25.036893864305558, 121.50194976477778],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_f239e10bff85c15c6a01b26251dda811 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_4014d9b6ac73291b89e0e6ac15c8df8b = $(`&lt;div id=&quot;html_4014d9b6ac73291b89e0e6ac15c8df8b&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;剝皮寮Pak-phê-liâu&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/fPop8Te.jpeg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     艋舺境內保留清代聚落紋理的街區，北邊為已消失的同安人聚落八甲庄     &lt;/div&gt;`)[0];
-                popup_f239e10bff85c15c6a01b26251dda811.setContent(html_4014d9b6ac73291b89e0e6ac15c8df8b);
-            
-        
-
-        marker_f1fc2d59dc049b17250e1fb9e71abb52.bindPopup(popup_f239e10bff85c15c6a01b26251dda811)
-        ;
-
-        
-    
-    
-            var marker_1c92fab1034e3b9266a906454eda6805 = L.marker(
-                [25.036862879555557, 121.49994481355556],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_6285ace85287648095a1212f22a2e929 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_1289c1eb44ba6560c00a074f1a1b9ca5 = $(`&lt;div id=&quot;html_1289c1eb44ba6560c00a074f1a1b9ca5&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;水燈棑仔Tsuí-ting-pâi-á&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/h4v8vPS.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     將水燈高掛在竹棚上就稱為水燈棑，目的是為了指引孤魂前來接收施普     &lt;/div&gt;`)[0];
-                popup_6285ace85287648095a1212f22a2e929.setContent(html_1289c1eb44ba6560c00a074f1a1b9ca5);
-            
-        
-
-        marker_1c92fab1034e3b9266a906454eda6805.bindPopup(popup_6285ace85287648095a1212f22a2e929)
-        ;
-
-        
-    
-    
-            var marker_66b63d15e3f38bd684e40238e4fdfad9 = L.marker(
-                [25.036723144305558, 121.49889137597222],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_7d7c2e721ec3be654fa1d9491613f84d = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_6b9d5224617e71c0766a6c7989cbe293 = $(`&lt;div id=&quot;html_6b9d5224617e71c0766a6c7989cbe293&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;隘門Ài-Mn̂g&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/TgZV1Ao.jpeg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     目前只留下痕跡，透過蜿蜒的巷弄與隘門，整個艋舺猶如一座要塞     &lt;/div&gt;`)[0];
-                popup_7d7c2e721ec3be654fa1d9491613f84d.setContent(html_6b9d5224617e71c0766a6c7989cbe293);
-            
-        
-
-        marker_66b63d15e3f38bd684e40238e4fdfad9.bindPopup(popup_7d7c2e721ec3be654fa1d9491613f84d)
-        ;
-
-        
-    
-    
-            var marker_2ea88d7b554e1d0d1d195cc72b953c97 = L.marker(
-                [25.036862575805557, 121.50005880744445],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_f7ba91254f54336c4e711dc13b73a3da = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_013afc7c0e56dfbc56df7a0c44d0b1a7 = $(`&lt;div id=&quot;html_013afc7c0e56dfbc56df7a0c44d0b1a7&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;祭祀公業Tsè-sū kong-gia̍p&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/SleGMrf.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     艋舺境內的祭祀公業多由行郊轉變而來，勢力不減     &lt;/div&gt;`)[0];
-                popup_f7ba91254f54336c4e711dc13b73a3da.setContent(html_013afc7c0e56dfbc56df7a0c44d0b1a7);
-            
-        
-
-        marker_2ea88d7b554e1d0d1d195cc72b953c97.bindPopup(popup_f7ba91254f54336c4e711dc13b73a3da)
-        ;
-
-        
-    
-    
-            var marker_6629533507375ebb744dcd3ca9948b37 = L.marker(
-                [25.036847387194445, 121.49994615466667],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_f73d8fd31357671b0e1d47118bb1871d = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_d8579dae2a580deb924e788b8f909998 = $(`&lt;div id=&quot;html_d8579dae2a580deb924e788b8f909998&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;拜懺Pài-tshàm&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/7wN5zD1.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     佛教中稱禮拜為拜懺，且多強調懺悔的部分     &lt;/div&gt;`)[0];
-                popup_f73d8fd31357671b0e1d47118bb1871d.setContent(html_d8579dae2a580deb924e788b8f909998);
-            
-        
-
-        marker_6629533507375ebb744dcd3ca9948b37.bindPopup(popup_f73d8fd31357671b0e1d47118bb1871d)
-        ;
-
-        
-    
-    
-            var marker_7624be8ab0d8baf9fe2cd27234ce28d3 = L.marker(
-                [25.036725878250003, 121.49994514883333],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_9548c7ce5b2bf50d24e55b4e7dd6d322 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_6b72b73018ec834b02a2aed1caac7dd3 = $(`&lt;div id=&quot;html_6b72b73018ec834b02a2aed1caac7dd3&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;出巡Tshut-sûn&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/7oXdy13.jpeg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     放水燈之前都會進行出巡，主要是告訴沿路孤魂記得在隔日的15號(農曆)前來接受施普     &lt;/div&gt;`)[0];
-                popup_9548c7ce5b2bf50d24e55b4e7dd6d322.setContent(html_6b72b73018ec834b02a2aed1caac7dd3);
-            
-        
-
-        marker_7624be8ab0d8baf9fe2cd27234ce28d3.bindPopup(popup_9548c7ce5b2bf50d24e55b4e7dd6d322)
-        ;
-
-        
-    
-    
-            var marker_97c657032b6b420df9972020d46fb35a = L.marker(
-                [25.03839448913889, 121.5005955845],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_e67cd86aab003de8cccee1de65b9f4a1 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_e557aa0488616b757ab10a5579d00725 = $(`&lt;div id=&quot;html_e557aa0488616b757ab10a5579d00725&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;出巡Tshut-sûn&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/cW2nUuj.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     隊伍依序為路關、鼓亭與燈棑仔     &lt;/div&gt;`)[0];
-                popup_e67cd86aab003de8cccee1de65b9f4a1.setContent(html_e557aa0488616b757ab10a5579d00725);
-            
-        
-
-        marker_97c657032b6b420df9972020d46fb35a.bindPopup(popup_e67cd86aab003de8cccee1de65b9f4a1)
-        ;
-
-        
-    
-    
-            var marker_a9675e6788bcec63d97e04ea5ca8b093 = L.marker(
-                [25.038515692638892, 121.49734172969444],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_9c2b52702d4ef9149521d3fbf0fbeb86 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_e8ca3a06d2faa91595b4f7cd73974305 = $(`&lt;div id=&quot;html_e8ca3a06d2faa91595b4f7cd73974305&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;水燈tsuí-ting&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/wiAG2NJ.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     又稱水燈頭，出巡最後會在華翠水門施放     &lt;/div&gt;`)[0];
-                popup_9c2b52702d4ef9149521d3fbf0fbeb86.setContent(html_e8ca3a06d2faa91595b4f7cd73974305);
-            
-        
-
-        marker_a9675e6788bcec63d97e04ea5ca8b093.bindPopup(popup_9c2b52702d4ef9149521d3fbf0fbeb86)
-        ;
-
-        
-    
-    
-            var marker_b17a67988dc0ec3ec58efa22de48f208 = L.marker(
-                [25.04012322261111, 121.49952068925],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_9f40df37a8c4bc9e148036603c3e2519 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_e6fc746486bc4873cf59b02133ed2399 = $(`&lt;div id=&quot;html_e6fc746486bc4873cf59b02133ed2399&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;艋舺青山宮Báng-kah-tshing-san-king&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/obYsEtN.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     艋舺境內三大廟頭之一，農曆10月的青山王繞境又被稱為艋舺大拜拜，是艋舺著名的慶典之一     &lt;/div&gt;`)[0];
-                popup_9f40df37a8c4bc9e148036603c3e2519.setContent(html_e6fc746486bc4873cf59b02133ed2399);
-            
-        
-
-        marker_b17a67988dc0ec3ec58efa22de48f208.bindPopup(popup_9f40df37a8c4bc9e148036603c3e2519)
-        ;
-
-        
-    
-    
-            var marker_3449045d454832935f458c6a023280cf = L.marker(
-                [25.040491991611113, 121.4998878166111],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_c25c8adad104f8eb7cfe12b6f8d27f61 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_ee90632d06e28fbfa95c4a7f26572eb6 = $(`&lt;div id=&quot;html_ee90632d06e28fbfa95c4a7f26572eb6&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;補充站póo-tshion-tsām&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/d75w6Yx.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     艋舺媽祖宮前的補給點，免費提供飲料和好吃的菜包     &lt;/div&gt;`)[0];
-                popup_c25c8adad104f8eb7cfe12b6f8d27f61.setContent(html_ee90632d06e28fbfa95c4a7f26572eb6);
-            
-        
-
-        marker_3449045d454832935f458c6a023280cf.bindPopup(popup_c25c8adad104f8eb7cfe12b6f8d27f61)
-        ;
-
-        
-    
-    
-            var marker_932243aa19721a2bc947121a53efd515 = L.marker(
-                [25.040494117972223, 121.49986099452778],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_4e6a837b0de3069e1af12ad465815829 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_e21de2db9bff0784071512ee702da32a = $(`&lt;div id=&quot;html_e21de2db9bff0784071512ee702da32a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;艋舺媽祖宮Báng-kah-má-tsóo-king&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/21S8YwO.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     也稱艋舺天后宮，幾乎年年參與龍山寺辦中元，     &lt;/div&gt;`)[0];
-                popup_4e6a837b0de3069e1af12ad465815829.setContent(html_e21de2db9bff0784071512ee702da32a);
-            
-        
-
-        marker_932243aa19721a2bc947121a53efd515.bindPopup(popup_4e6a837b0de3069e1af12ad465815829)
-        ;
-
-        
-    
-    
-            var marker_8ae7b72cf985535df582d3c95b276532 = L.marker(
-                [25.038516603944448, 121.49732194841667],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_2047c0e36852d1a89c3ccccf17ad846f = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_7a9c8a54c02d2ebf859cfc698944ad3b = $(`&lt;div id=&quot;html_7a9c8a54c02d2ebf859cfc698944ad3b&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;路關Lōo-kuan&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/SiqZiYb.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     提醒沿途民眾神明即將通過的牌子     &lt;/div&gt;`)[0];
-                popup_2047c0e36852d1a89c3ccccf17ad846f.setContent(html_7a9c8a54c02d2ebf859cfc698944ad3b);
-            
-        
-
-        marker_8ae7b72cf985535df582d3c95b276532.bindPopup(popup_2047c0e36852d1a89c3ccccf17ad846f)
-        ;
-
-        
-    
-    
-            var marker_a480f3876dcb24da580f4249dc30b3c7 = L.marker(
-                [25.03904212152778, 121.49582527577778],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_bdc513b89d4771a4766a31a0a76a04b9 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_f79b24ed1460d5aeec5f4b93feb07472 = $(`&lt;div id=&quot;html_f79b24ed1460d5aeec5f4b93feb07472&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;大溪口Tuā-khe-kháu(一號水門)&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/4fKiBpb.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     出巡結束後抵達一號水門準備放水燈事宜，     &lt;/div&gt;`)[0];
-                popup_bdc513b89d4771a4766a31a0a76a04b9.setContent(html_f79b24ed1460d5aeec5f4b93feb07472);
-            
-        
-
-        marker_a480f3876dcb24da580f4249dc30b3c7.bindPopup(popup_bdc513b89d4771a4766a31a0a76a04b9)
-        ;
-
-        
-    
-    
-            var marker_86902e01e60d65b80cc23ef81ef877dd = L.marker(
-                [25.0391697035, 121.49574849755555],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_83290e21e14aa2323c1668a3da335b19 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_96be55bc37266d8d07af0a77de0a8c20 = $(`&lt;div id=&quot;html_96be55bc37266d8d07af0a77de0a8c20&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;徛燈棑khiā-ting-pâi&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/0nGA9ah.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     將燈棑豎起面向淡水河以招孤魂     &lt;/div&gt;`)[0];
-                popup_83290e21e14aa2323c1668a3da335b19.setContent(html_96be55bc37266d8d07af0a77de0a8c20);
-            
-        
-
-        marker_86902e01e60d65b80cc23ef81ef877dd.bindPopup(popup_83290e21e14aa2323c1668a3da335b19)
-        ;
-
-        
-    
-    
-            var marker_9bedb466c45d47f7f00d5239e6fa8a96 = L.marker(
-                [25.03935591216667, 121.49578537791666],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_38e9f5e92c5ab3b46424e21d81e860d9 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_6b6a3182a6f24c9f97d2ddf549ca7b29 = $(`&lt;div id=&quot;html_6b6a3182a6f24c9f97d2ddf549ca7b29&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;拜懺Pài-tshàm(放水燈前)&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/EFZTB6a.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     放水燈前須進行拜懺秉告溪邊好兄弟，當進行到一半時大部分人員會陸續前往水燈施放處     &lt;/div&gt;`)[0];
-                popup_38e9f5e92c5ab3b46424e21d81e860d9.setContent(html_6b6a3182a6f24c9f97d2ddf549ca7b29);
-            
-        
-
-        marker_9bedb466c45d47f7f00d5239e6fa8a96.bindPopup(popup_38e9f5e92c5ab3b46424e21d81e860d9)
-        ;
-
-        
-    
-    
-            var marker_b49fcbb97bacea199ae2e9285690fd0d = L.marker(
-                [25.039401780833334, 121.49582862852778],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_0722e5be7d85377210b1e1b97f610e93 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_b2817973f498bdd8bd6cedd50216b9b1 = $(`&lt;div id=&quot;html_b2817973f498bdd8bd6cedd50216b9b1&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;燒金sio-kim&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/XPkBx9d.jpeg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     與孤魂打招呼的例行公事     &lt;/div&gt;`)[0];
-                popup_0722e5be7d85377210b1e1b97f610e93.setContent(html_b2817973f498bdd8bd6cedd50216b9b1);
-            
-        
-
-        marker_b49fcbb97bacea199ae2e9285690fd0d.bindPopup(popup_0722e5be7d85377210b1e1b97f610e93)
-        ;
-
-        
-    
-    
-            var marker_bd594c35127148abd8c1ea75e3ab1fae = L.marker(
-                [25.037, 121.5006],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_9b728e4a0d6a00c4c75166ecdc015652 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_fc63b050e3ce3bab759f4dcfd9969fc5 = $(`&lt;div id=&quot;html_fc63b050e3ce3bab759f4dcfd9969fc5&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;艋舺地藏庵Báng-kah-tē-tsông-am與大眾廟Tāi-tsiòng-biō&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/ucb9tsU.jpg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     農曆6/29即在此豎立燈篙，以稟告地藏王菩薩辦中元即將開始；一旁的大眾廟則和漳泉拚有關     &lt;/div&gt;`)[0];
-                popup_9b728e4a0d6a00c4c75166ecdc015652.setContent(html_fc63b050e3ce3bab759f4dcfd9969fc5);
-            
-        
-
-        marker_bd594c35127148abd8c1ea75e3ab1fae.bindPopup(popup_9b728e4a0d6a00c4c75166ecdc015652)
-        ;
-
-        
-    
-    
-            var marker_c352058acd90847d9f57a0ee34727832 = L.marker(
-                [25.028, 121.488],
-                {}
-            ).addTo(map_3551156dd033bba6d4e34ebcecc5a6c7);
-        
-    
-        var popup_5c04213473c1ce97530c25093808deb6 = L.popup({&quot;maxWidth&quot;: 400});
-
-        
-            
-                var html_62ece8592220145002887032da32dce9 = $(`&lt;div id=&quot;html_62ece8592220145002887032da32dce9&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;     &lt;b&gt;放水燈&lt;/b&gt;&lt;br&gt;     &lt;img src=&quot;https://i.imgur.com/OaN4z8a.jpeg&quot; width=&quot;auto&quot; height=&quot;300&quot;&gt;&lt;br&gt;     放水燈是為了指引水中孤魂前來龍山寺受普，施放前的拜懺和放水燈往往不在同個地方     &lt;/div&gt;`)[0];
-                popup_5c04213473c1ce97530c25093808deb6.setContent(html_62ece8592220145002887032da32dce9);
-            
-        
-
-        marker_c352058acd90847d9f57a0ee34727832.bindPopup(popup_5c04213473c1ce97530c25093808deb6)
-        ;
-
-        
-    
-&lt;/script&gt;
-&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div></div></div>
 </div>
 </section>
 </section>
@@ -1349,8 +631,9 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">360°攝影</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpxgeotagging">gpx路徑與geotagging照片</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">呈現360°攝影</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpxgeotagged">數化路徑gpx和geotagged照片</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">呈現路徑與照片點位疊圖</a></li>
 </ul>
   </nav></div>
 
