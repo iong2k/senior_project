@@ -14,7 +14,7 @@ imgur是一款相當方便的圖像儲存平台。
 ---
 * 匯入模組`IPython.display`
 
-```{tip}
+```{note}
 由於pannellum是基於javascript的程式庫，要放在jupyter notebook須以html顯示。我們可以從`IPython.display`模組加入display(函數)和HTML(用來顯示html檔)的功能
 
 ◆ 加入html的文字宣告避免跑版
